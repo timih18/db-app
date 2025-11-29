@@ -3,8 +3,11 @@ package ru.mirea.nosenkov.dbapp.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
+import javafx.stage.Stage;
+import ru.mirea.nosenkov.dbapp.impl.DisplayContextImpl;
 import ru.mirea.nosenkov.dbapp.impl.JDBCService;
 import ru.mirea.nosenkov.dbapp.logic.DatabaseService;
+import ru.mirea.nosenkov.dbapp.logic.DisplayContext;
 
 import java.sql.*;
 
@@ -19,32 +22,39 @@ public class ConnectionFormController {
     private TextField passwordField;
 
     private final DatabaseService jdbcService = new JDBCService();
+    private MainFormController mainFormController;
+
+    public void setMainFormController(MainFormController mainFormController) {
+        this.mainFormController = mainFormController;
+    }
 
     @FXML
     protected void onConnectButtonClick() {
+        DisplayContext displayContext = new DisplayContextImpl();
         String address = addressField.getText().trim();
         String dbName = nameField.getText().trim();
         String login = loginField.getText().trim();
         String password = passwordField.getText();
 
         if (address.isEmpty() || dbName.isEmpty() || login.isEmpty() || password.isEmpty()) {
-            showError("Ошибка", "Недостаточно данных");
+            displayContext.showError("Ошибка", "Недостаточно данных");
             return;
         }
 
-        try (Connection connection = jdbcService.createConnection(address, dbName, login, password)) {
-            showError("Успех", "БД подключена");
+        try {
+            Connection connection = jdbcService.createConnection(address, dbName, login, password);
+            displayContext.showInfo("Успех", "БД подключена");
+
+            if (mainFormController != null) {
+                mainFormController.onConnectionEstablished();
+            }
+
+            Stage stage = (Stage) addressField.getScene().getWindow();
+            stage.close();
+
         } catch (SQLException e) {
             e.printStackTrace();
-            showError("Ошибка подключения", e.getMessage());
+            displayContext.showError("Ошибка подключения", e.getMessage());
         }
-    }
-
-    private void showError(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }
