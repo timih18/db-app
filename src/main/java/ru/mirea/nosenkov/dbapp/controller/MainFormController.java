@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import ru.mirea.nosenkov.dbapp.Launcher;
 import ru.mirea.nosenkov.dbapp.impl.DisplayContextImpl;
 import ru.mirea.nosenkov.dbapp.logic.DisplayContext;
-import ru.mirea.nosenkov.dbapp.impl.ConnectionManager;
+import ru.mirea.nosenkov.dbapp.logic.ConnectionManager;
 
 import java.io.IOException;
 import java.sql.SQLException;

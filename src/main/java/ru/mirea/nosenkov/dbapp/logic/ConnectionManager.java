@@ -1,4 +1,4 @@
-package ru.mirea.nosenkov.dbapp.impl;
+package ru.mirea.nosenkov.dbapp.logic;
 
 import java.sql.Connection;
 import java.sql.SQLException;
