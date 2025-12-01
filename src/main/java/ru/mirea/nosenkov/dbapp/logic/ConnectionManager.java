@@ -1,13 +1,18 @@
 package ru.mirea.nosenkov.dbapp.logic;
 
+import ru.mirea.nosenkov.dbapp.impl.JDBCService;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ConnectionManager {
     private static ConnectionManager instance;
+    private final DatabaseService jdbcService;
     private Connection connection;
 
-    private ConnectionManager() {};
+    private ConnectionManager() {
+        jdbcService = new JDBCService();
+    };
 
     public static ConnectionManager getInstance() {
         if (instance == null) { instance = new ConnectionManager(); }
@@ -31,4 +36,6 @@ public class ConnectionManager {
             connection = null;
         }
     }
+
+    public DatabaseService getJdbcService() { return jdbcService; }
 }

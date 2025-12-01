@@ -6,6 +6,7 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import ru.mirea.nosenkov.dbapp.impl.DisplayContextImpl;
 import ru.mirea.nosenkov.dbapp.impl.JDBCService;
+import ru.mirea.nosenkov.dbapp.logic.ConnectionManager;
 import ru.mirea.nosenkov.dbapp.logic.DatabaseService;
 import ru.mirea.nosenkov.dbapp.logic.DisplayContext;
 
@@ -43,6 +44,7 @@ public class ConnectionFormController {
 
         try {
             Connection connection = jdbcService.createConnection(address, dbName, login, password);
+            ConnectionManager.getInstance().setConnection(connection);
             displayContext.showInfo("Успех", "БД подключена");
 
             if (mainFormController != null) {

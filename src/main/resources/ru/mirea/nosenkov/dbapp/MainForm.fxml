@@ -7,9 +7,14 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.mirea.nosenkov.dbapp.controller.MainFormController">
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Button?>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.mirea.nosenkov.dbapp.controller.MainFormController">
    <children>
-      <MenuBar fx:id="menuBar" prefHeight="26.0" prefWidth="1058.0">
+      <MenuBar fx:id="menuBar" prefHeight="26.0" prefWidth="1000.0">
         <menus>
           <Menu fx:id="connectionMenu" mnemonicParsing="false" text="Подключения">
             <items>
@@ -18,9 +23,23 @@
             </items>
           </Menu>
         </menus>
-         <VBox.margin>
-            <Insets bottom="574.0" />
-         </VBox.margin>
       </MenuBar>
+
+       <HBox spacing="10" alignment="CENTER_LEFT" prefHeight="50.0">
+           <padding>
+               <Insets top="10" bottom="10" left="10" right="10"/>
+           </padding>
+           <children>
+               <Label text="Таблица:"/>
+               <ComboBox fx:id="tableComboBox" prefWidth="200.0" onAction="#onTableSelected" disable="true"/>
+               <Button fx:id="refreshButton" text="Обновить" onAction="#onRefreshButtonClick" disable="true"/>
+           </children>
+       </HBox>
+
+       <TableView fx:id="dataTableView" prefHeight="500.0" prefWidth="1000.0" VBox.vgrow="ALWAYS">
+           <padding>
+               <Insets bottom="10"/>
+           </padding>
+       </TableView>
    </children>
 </VBox>
