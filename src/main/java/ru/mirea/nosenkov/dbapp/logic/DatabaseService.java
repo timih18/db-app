@@ -3,7 +3,6 @@ package ru.mirea.nosenkov.dbapp.logic;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Objects;
 
 public interface DatabaseService {
 

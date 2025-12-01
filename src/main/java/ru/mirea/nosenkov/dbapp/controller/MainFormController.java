@@ -11,7 +11,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import ru.mirea.nosenkov.dbapp.Launcher;
 import ru.mirea.nosenkov.dbapp.impl.DisplayContextImpl;
-import ru.mirea.nosenkov.dbapp.impl.JDBCService;
 import ru.mirea.nosenkov.dbapp.logic.DatabaseService;
 import ru.mirea.nosenkov.dbapp.logic.DisplayContext;
 import ru.mirea.nosenkov.dbapp.logic.ConnectionManager;
@@ -46,7 +45,7 @@ public class MainFormController {
     }
 
     @FXML
-    protected void onConnectMenuAction(ActionEvent event) throws IOException {
+    protected void onConnectMenuAction() throws IOException {
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(Launcher.class.getResource("ConnectionForm.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
@@ -63,7 +62,7 @@ public class MainFormController {
     }
 
     @FXML
-    protected void onDisconnectMenuAction(ActionEvent event) {
+    protected void onDisconnectMenuAction() {
         try {
             ConnectionManager.getInstance().closeConnection();
             disconnectItem.setDisable(true);
@@ -89,7 +88,7 @@ public class MainFormController {
     }
 
     @FXML
-    public void onTableSelected(ActionEvent actionEvent) {
+    public void onTableSelected() {
         String table = tableComboBox.getValue();
         if (table != null && !table.isEmpty()) {
             loadTableData(table);
@@ -97,7 +96,7 @@ public class MainFormController {
     }
 
     @FXML
-    public void onRefreshButtonClick(ActionEvent actionEvent) {
+    public void onRefreshButtonClick() {
         String table = tableComboBox.getValue();
         if (table != null && !table.isEmpty()) { loadTableData(table); }
         else { displayContext.showError("Ошибка", "Не удалось обновить выбранную таблицу"); }

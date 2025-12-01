@@ -2,7 +2,6 @@ package ru.mirea.nosenkov.dbapp.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import ru.mirea.nosenkov.dbapp.impl.DisplayContextImpl;
 import ru.mirea.nosenkov.dbapp.impl.JDBCService;

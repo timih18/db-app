@@ -12,34 +12,30 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.Button?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.mirea.nosenkov.dbapp.controller.MainFormController">
-   <children>
-      <MenuBar fx:id="menuBar" prefHeight="26.0" prefWidth="1000.0">
-        <menus>
-          <Menu fx:id="connectionMenu" mnemonicParsing="false" text="Подключения">
-            <items>
-                  <MenuItem fx:id="connectItem" mnemonicParsing="false" text="Подключиться к БД" onAction="#onConnectMenuAction"/>
-                  <MenuItem fx:id="disconnectItem" mnemonicParsing="false" text="Отключиться от БД" onAction="#onDisconnectMenuAction" disable="true"/>
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+      prefWidth="1000.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ru.mirea.nosenkov.dbapp.controller.MainFormController">
+    <MenuBar fx:id="menuBar" prefHeight="26.0" prefWidth="1000.0">
+        <Menu fx:id="connectionMenu" mnemonicParsing="false" text="Подключения">
+            <MenuItem fx:id="connectItem" mnemonicParsing="false" text="Подключиться к БД"
+                      onAction="#onConnectMenuAction"/>
+            <MenuItem fx:id="disconnectItem" mnemonicParsing="false" text="Отключиться от БД"
+                      onAction="#onDisconnectMenuAction" disable="true"/>
+        </Menu>
+    </MenuBar>
 
-       <HBox spacing="10" alignment="CENTER_LEFT" prefHeight="50.0">
-           <padding>
-               <Insets top="10" bottom="10" left="10" right="10"/>
-           </padding>
-           <children>
-               <Label text="Таблица:"/>
-               <ComboBox fx:id="tableComboBox" prefWidth="200.0" onAction="#onTableSelected" disable="true"/>
-               <Button fx:id="refreshButton" text="Обновить" onAction="#onRefreshButtonClick" disable="true"/>
-           </children>
-       </HBox>
+    <HBox spacing="10" alignment="CENTER_LEFT" prefHeight="50.0">
+        <padding>
+            <Insets top="10" bottom="10" left="10" right="10"/>
+        </padding>
+        <Label text="Таблица:"/>
+        <ComboBox fx:id="tableComboBox" prefWidth="200.0" onAction="#onTableSelected" disable="true"/>
+        <Button fx:id="refreshButton" text="Обновить" onAction="#onRefreshButtonClick" disable="true"/>
+    </HBox>
 
-       <TableView fx:id="dataTableView" prefHeight="500.0" prefWidth="1000.0" VBox.vgrow="ALWAYS">
-           <padding>
-               <Insets bottom="10"/>
-           </padding>
-       </TableView>
-   </children>
+    <TableView fx:id="dataTableView" prefHeight="500.0" prefWidth="1000.0" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets bottom="10"/>
+        </padding>
+    </TableView>
 </VBox>

@@ -12,7 +12,7 @@ public class ConnectionManager {
 
     private ConnectionManager() {
         jdbcService = new JDBCService();
-    };
+    }
 
     public static ConnectionManager getInstance() {
         if (instance == null) { instance = new ConnectionManager(); }

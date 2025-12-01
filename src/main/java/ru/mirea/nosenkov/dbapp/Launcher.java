@@ -5,7 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import ru.mirea.nosenkov.dbapp.controller.ConnectionFormController;
 
 import java.io.IOException;
 
