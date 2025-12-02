@@ -2,11 +2,13 @@ package ru.mirea.nosenkov.dbapp.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.mirea.nosenkov.dbapp.Launcher;
 import ru.mirea.nosenkov.dbapp.impl.DisplayContextImpl;
@@ -35,6 +37,8 @@ public class MainFormController {
     private Button refreshButton;
     @FXML
     private TableView<TableRow> dataTableView;
+    @FXML
+    private Button addButton;
 
     private final DisplayContext displayContext = new DisplayContextImpl();
     private ObservableList<TableRow> tableData = FXCollections.observableArrayList();
@@ -69,6 +73,7 @@ public class MainFormController {
             connectItem.setDisable(false);
             tableComboBox.setDisable(true);
             refreshButton.setDisable(true);
+            addButton.setDisable(true);
             tableComboBox.getItems().clear();
             dataTableView.getColumns().clear();
             tableData.clear();
@@ -84,6 +89,7 @@ public class MainFormController {
         connectItem.setDisable(true);
         tableComboBox.setDisable(false);
         refreshButton.setDisable(false);
+        addButton.setDisable(false);
         loadTablesList();
     }
 
@@ -96,11 +102,7 @@ public class MainFormController {
     }
 
     @FXML
-    public void onRefreshButtonClick() {
-        String table = tableComboBox.getValue();
-        if (table != null && !table.isEmpty()) { loadTableData(table); }
-        else { displayContext.showError("Ошибка", "Не удалось обновить выбранную таблицу"); }
-    }
+    public void onRefreshButtonClick() { refreshCurrentTable(); }
 
     private void loadTablesList() {
         try {
@@ -141,6 +143,43 @@ public class MainFormController {
         } catch (SQLException e) {
             e.printStackTrace();
             displayContext.showError("Ошибка", "Не удалось загрузить данные: " + e.getMessage());
+        }
+    }
+
+    public void refreshCurrentTable() {
+        String table = tableComboBox.getValue();
+        if (table != null && !table.isEmpty()) { loadTableData(table); }
+        else { displayContext.showError("Ошибка", "Не удалось обновить выбранную таблицу"); }
+    }
+
+    public void onAddButtonClick() {
+        if (tableComboBox.getValue() == null) {
+            displayContext.showError("Ошибка", "Не выбрана таблица");
+            return;
+        }
+
+        try {
+            Connection connection = ConnectionManager.getInstance().getConnection();
+            DatabaseService jdbcService = ConnectionManager.getInstance().getJdbcService();
+
+            List<String> columns = jdbcService.getEditableColumns(connection, tableComboBox.getValue());
+            Stage stage = new Stage();
+            Image icon = new Image(Launcher.class.getResourceAsStream("icon.png"));
+            stage.getIcons().add(icon);
+            stage.setTitle("Добавить запись - " + tableComboBox.getValue());
+            stage.setResizable(false);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(addButton.getScene().getWindow());
+            FXMLLoader fxmlLoader = new FXMLLoader(Launcher.class.getResource("AddForm.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            stage.setScene(scene);
+
+            AddFormController addFormController = fxmlLoader.getController();
+            addFormController.setTableData(tableComboBox.getValue(), columns, this);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+            displayContext.showError("Ошибка", e.getMessage());
         }
     }
 }

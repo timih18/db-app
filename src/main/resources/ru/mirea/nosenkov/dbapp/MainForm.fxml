@@ -31,6 +31,7 @@
         <Label text="Таблица:"/>
         <ComboBox fx:id="tableComboBox" prefWidth="200.0" onAction="#onTableSelected" disable="true"/>
         <Button fx:id="refreshButton" text="Обновить" onAction="#onRefreshButtonClick" disable="true"/>
+        <Button fx:id="addButton" text="Добавить запись" onAction="#onAddButtonClick" disable="true"/>
     </HBox>
 
     <TableView fx:id="dataTableView" prefHeight="500.0" prefWidth="1000.0" VBox.vgrow="ALWAYS">

@@ -3,6 +3,7 @@ package ru.mirea.nosenkov.dbapp.logic;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 public interface DatabaseService {
 
@@ -11,4 +12,10 @@ public interface DatabaseService {
     List<List<Object>> getTableData(Connection connection, String table) throws SQLException;
 
     List<String> getTableColumns(Connection connection, String table) throws SQLException;
+
+    List<String> getEditableColumns(Connection connection, String table) throws SQLException;
+
+    void executeUpdate(Connection connection, String query) throws SQLException;
+
+    int addToDB(Connection connection, String table, Map<String, String> values) throws SQLException;
 }
