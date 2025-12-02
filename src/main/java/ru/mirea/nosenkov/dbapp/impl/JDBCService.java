@@ -1,6 +1,5 @@
 package ru.mirea.nosenkov.dbapp.impl;
 
-import ru.mirea.nosenkov.dbapp.logic.ConnectionManager;
 import ru.mirea.nosenkov.dbapp.logic.DatabaseService;
 
 import java.sql.*;
@@ -9,18 +8,8 @@ import java.util.List;
 
 public class JDBCService implements DatabaseService {
 
-    private Connection connection;
-
     @Override
-    public Connection createConnection(String address, String name, String login, String password) throws SQLException {
-        String url = "jdbc:sqlserver://" + address + ";databaseName=" + name + ";encrypt=false;";
-        this.connection =  DriverManager.getConnection(url, login, password);
-        return connection;
-    }
-
-    @Override
-    public List<String> getTableNames() throws SQLException {
-        connection = ConnectionManager.getInstance().getConnection();
+    public List<String> getTableNames(Connection connection) throws SQLException {
         List<String> tableNames = new ArrayList<>();
 
         if (connection == null || connection.isClosed()) {
@@ -40,8 +29,7 @@ public class JDBCService implements DatabaseService {
     }
 
     @Override
-    public List<List<Object>> getTableData(String table) throws SQLException {
-        connection = ConnectionManager.getInstance().getConnection();
+    public List<List<Object>> getTableData(Connection connection, String table) throws SQLException {
         List<List<Object>> data = new ArrayList<>();
         if (connection == null || connection.isClosed()) {
             throw new SQLException("Нет подключения к БД");
@@ -65,8 +53,7 @@ public class JDBCService implements DatabaseService {
     }
 
     @Override
-    public List<String> getTableColumns(String table) throws SQLException {
-        connection = ConnectionManager.getInstance().getConnection();
+    public List<String> getTableColumns(Connection connection, String table) throws SQLException {
         List<String> columns = new ArrayList<>();
         if (connection == null || connection.isClosed()) {
             throw new SQLException("Нет подключения к БД");

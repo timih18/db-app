@@ -3,6 +3,7 @@ package ru.mirea.nosenkov.dbapp.logic;
 import ru.mirea.nosenkov.dbapp.impl.JDBCService;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectionManager {
@@ -19,8 +20,16 @@ public class ConnectionManager {
         return instance;
     }
 
-    public void setConnection(Connection connection) { this.connection = connection; }
+
+    public Connection createConnection(String address, String name, String login, String password) throws SQLException {
+        String url = "jdbc:sqlserver://" + address + ";databaseName=" + name + ";encrypt=false;";
+        this.connection =  DriverManager.getConnection(url, login, password);
+        return connection;
+    }
+
     public Connection getConnection() { return this.connection; }
+    public void setConnection(Connection connection) { this.connection = connection; }
+    public DatabaseService getJdbcService() { return jdbcService; }
 
     public boolean isConnected() {
         try {
@@ -36,6 +45,4 @@ public class ConnectionManager {
             connection = null;
         }
     }
-
-    public DatabaseService getJdbcService() { return jdbcService; }
 }

@@ -2,7 +2,6 @@ package ru.mirea.nosenkov.dbapp.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,6 +16,7 @@ import ru.mirea.nosenkov.dbapp.logic.ConnectionManager;
 import ru.mirea.nosenkov.dbapp.logic.TableRow;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -104,8 +104,9 @@ public class MainFormController {
 
     private void loadTablesList() {
         try {
+            Connection connection = ConnectionManager.getInstance().getConnection();
             DatabaseService jdbcService = ConnectionManager.getInstance().getJdbcService();
-            ObservableList<String> tables = FXCollections.observableArrayList(jdbcService.getTableNames());
+            ObservableList<String> tables = FXCollections.observableArrayList(jdbcService.getTableNames(connection));
             tableComboBox.setItems(tables);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -115,9 +116,10 @@ public class MainFormController {
 
     private void loadTableData(String table) {
         try {
+            Connection connection = ConnectionManager.getInstance().getConnection();
             DatabaseService jdbcService = ConnectionManager.getInstance().getJdbcService();
-            List<String> columns = jdbcService.getTableColumns(table);
-            List<List<Object>> data = jdbcService.getTableData(table);
+            List<String> columns = jdbcService.getTableColumns(connection, table);
+            List<List<Object>> data = jdbcService.getTableData(connection, table);
 
             dataTableView.getColumns().clear();
             tableData.clear();
