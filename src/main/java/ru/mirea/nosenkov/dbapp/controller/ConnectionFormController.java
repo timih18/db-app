@@ -50,7 +50,6 @@ public class ConnectionFormController {
             stage.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
             displayContext.showError("Ошибка подключения", e.getMessage());
         }
     }

@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class Launcher extends Application {
     @Override
@@ -14,7 +15,7 @@ public class Launcher extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(Launcher.class.getResource("MainForm.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
-        Image icon = new Image(Launcher.class.getResourceAsStream("icon.png"));
+        Image icon = new Image(Objects.requireNonNull(Launcher.class.getResourceAsStream("icon.png")));
         stage.getIcons().add(icon);
         stage.setTitle("DBApp");
         stage.setResizable(false);

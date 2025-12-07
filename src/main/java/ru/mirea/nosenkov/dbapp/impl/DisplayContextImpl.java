@@ -6,6 +6,8 @@ import javafx.stage.Stage;
 import ru.mirea.nosenkov.dbapp.Launcher;
 import ru.mirea.nosenkov.dbapp.logic.DisplayContext;
 
+import java.util.Objects;
+
 public class DisplayContextImpl implements DisplayContext {
     @Override
     public void showError(String title, String message) {
@@ -13,7 +15,7 @@ public class DisplayContextImpl implements DisplayContext {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        Image icon = new Image(Launcher.class.getResourceAsStream("icon.png"));
+        Image icon = new Image(Objects.requireNonNull(Launcher.class.getResourceAsStream("icon.png")));
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.getIcons().add(icon);
         alert.showAndWait();
@@ -25,7 +27,7 @@ public class DisplayContextImpl implements DisplayContext {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        Image icon = new Image(Launcher.class.getResourceAsStream("icon.png"));
+        Image icon = new Image(Objects.requireNonNull(Launcher.class.getResourceAsStream("icon.png")));
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.getIcons().add(icon);
         alert.showAndWait();

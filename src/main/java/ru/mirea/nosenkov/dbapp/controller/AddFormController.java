@@ -11,13 +11,12 @@ import ru.mirea.nosenkov.dbapp.logic.ConnectionManager;
 import ru.mirea.nosenkov.dbapp.logic.DatabaseService;
 import ru.mirea.nosenkov.dbapp.logic.DisplayContext;
 
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
+
 
 public class AddFormController {
     @FXML
@@ -30,7 +29,7 @@ public class AddFormController {
     private MainFormController mainFormController;
     private Connection connection;
     private DatabaseService jdbcService;
-    private DisplayContext displayContext = new DisplayContextImpl();
+    private final DisplayContext displayContext = new DisplayContextImpl();
 
     public void setTableData(String tableName, List<String> columns, MainFormController mainFormController) {
         this.tableName = tableName;
@@ -86,7 +85,6 @@ public class AddFormController {
             Stage stage = (Stage) saveButton.getScene().getWindow();
             stage.close();
         } catch (SQLException e) {
-            e.printStackTrace();
             displayContext.showError("Ошибка", "Не удалось добавить запись: " + e.getMessage());
         }
     }

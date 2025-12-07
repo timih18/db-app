@@ -73,17 +73,6 @@ public class JDBCService implements DatabaseService {
     }
 
     @Override
-    public void executeUpdate(Connection connection, String query) throws SQLException {
-        if (connection == null || connection.isClosed()) {
-            throw new SQLException("Нет подключения к БД");
-        }
-
-        try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(query);
-        }
-    }
-
-    @Override
     public int addToDB(Connection connection, String table, Map<String, String> inputValues) throws  SQLException {
         if (connection == null || connection.isClosed()) {
             throw new SQLException("Нет подключения к БД");

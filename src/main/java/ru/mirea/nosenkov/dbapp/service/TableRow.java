@@ -1,4 +1,4 @@
-package ru.mirea.nosenkov.dbapp.logic;
+package ru.mirea.nosenkov.dbapp.service;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -15,11 +15,5 @@ public class TableRow {
 
     public StringProperty getProperty(String column) {
         return data.getOrDefault(column, new SimpleStringProperty("null"));
-    }
-
-    public String get(String column) {
-        StringProperty property = data.get(column);
-        if (property != null) { return property.get(); }
-        return "null";
     }
 }
