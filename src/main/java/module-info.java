@@ -11,6 +11,7 @@ module ru.mirea.dbapp {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.sql;
+    requires itextpdf;
 
     opens ru.mirea.nosenkov.dbapp to javafx.fxml;
     exports ru.mirea.nosenkov.dbapp;

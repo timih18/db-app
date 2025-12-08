@@ -34,6 +34,7 @@
         <Button fx:id="addButton" text="Добавить запись" onAction="#onAddButtonClick" disable="true"/>
         <Button fx:id="updateButton" text="Изменить запись" onAction="#onUpdateButtonClick" disable="true"/>
         <Button fx:id="deleteButton" text="Удалить запись" onAction="#onDeleteButtonClick" disable="true"/>
+        <Button fx:id="exportButton" text="Экспорт в pdf" onAction="#onExportButtonClick" disable="true"/>
     </HBox>
 
     <TableView fx:id="dataTableView" prefHeight="500.0" prefWidth="1000.0" VBox.vgrow="ALWAYS">

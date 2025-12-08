@@ -11,9 +11,10 @@ public class ElementsManager {
     private final Button addButton;
     private final Button updateButton;
     private final Button deleteButton;
+    private final Button exportButton;
     private final TableView<TableRow> dataTableView;
 
-    public ElementsManager(MenuItem connectItem, MenuItem disconnectItem, ComboBox<String> tableComboBox, Button refreshButton, Button addButton, Button updateButton, Button deleteButton, TableView<TableRow> dataTableView) {
+    public ElementsManager(MenuItem connectItem, MenuItem disconnectItem, ComboBox<String> tableComboBox, Button refreshButton, Button addButton, Button updateButton, Button deleteButton, Button exportButton, TableView<TableRow> dataTableView) {
         this.connectItem = connectItem;
         this.disconnectItem = disconnectItem;
         this.tableComboBox = tableComboBox;
@@ -21,6 +22,7 @@ public class ElementsManager {
         this.addButton = addButton;
         this.updateButton = updateButton;
         this.deleteButton = deleteButton;
+        this.exportButton = exportButton;
         this.dataTableView = dataTableView;
     }
 
@@ -32,6 +34,7 @@ public class ElementsManager {
         addButton.setDisable(false);
         updateButton.setDisable(false);
         deleteButton.setDisable(false);
+        exportButton.setDisable(false);
     }
 
     public void setDisconnectedState() {
@@ -42,6 +45,7 @@ public class ElementsManager {
         addButton.setDisable(true);
         updateButton.setDisable(true);
         deleteButton.setDisable(true);
+        exportButton.setDisable(true);
     }
 
     public void clearData() {

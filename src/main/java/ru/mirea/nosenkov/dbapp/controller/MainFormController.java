@@ -2,17 +2,24 @@ package ru.mirea.nosenkov.dbapp.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.stage.DirectoryChooser;
 import ru.mirea.nosenkov.dbapp.impl.DisplayContextImpl;
 import ru.mirea.nosenkov.dbapp.logic.DisplayContext;
 import ru.mirea.nosenkov.dbapp.logic.ConnectionManager;
 import ru.mirea.nosenkov.dbapp.service.TableDataService;
 import ru.mirea.nosenkov.dbapp.service.TableRow;
+import ru.mirea.nosenkov.dbapp.service.PDFExporter;
 import ru.mirea.nosenkov.dbapp.ui.ElementsManager;
 import ru.mirea.nosenkov.dbapp.ui.StageCreator;
 import ru.mirea.nosenkov.dbapp.ui.TableViewBuilder;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class MainFormController {
@@ -32,6 +39,8 @@ public class MainFormController {
     private Button updateButton;
     @FXML
     private Button deleteButton;
+    @FXML
+    private Button exportButton;
 
     private DisplayContext displayContext;
     private TableDataService tableDataService;
@@ -40,10 +49,11 @@ public class MainFormController {
 
     @FXML
     public void initialize() {
-        this.elementsManager = new ElementsManager(connectItem, disconnectItem, tableComboBox, refreshButton, addButton, updateButton, deleteButton, dataTableView);
+        this.elementsManager = new ElementsManager(connectItem, disconnectItem, tableComboBox, refreshButton, addButton, updateButton, deleteButton, exportButton, dataTableView);
         this.tableDataService = new TableDataService(ConnectionManager.getInstance());
         this.tableViewBuilder = new TableViewBuilder();
         this.displayContext = new DisplayContextImpl();
+        setupContextMenu();
     }
 
     @FXML
@@ -167,5 +177,67 @@ public class MainFormController {
         String table = tableComboBox.getValue();
         if (table != null && !table.isEmpty()) { loadTableData(table); }
         else { displayContext.showError("Ошибка", "Не удалось обновить выбранную таблицу"); }
+    }
+
+    private void setupContextMenu() {
+        ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem deleteItem = new MenuItem("Удалить");
+        deleteItem.setOnAction(_ -> onDeleteButtonClick());
+
+        MenuItem updateItem = new MenuItem("Изменить");
+        updateItem.setOnAction(_ -> onUpdateButtonClick());
+
+        contextMenu.getItems().addAll(updateItem, deleteItem);
+
+        dataTableView.setOnMouseClicked(event -> {
+            TableRow row = dataTableView.getSelectionModel().getSelectedItem();
+            if (event.getClickCount() == 1 && event.getButton() == MouseButton.SECONDARY && row != null) {
+                contextMenu.show(dataTableView, event.getScreenX(), event.getScreenY());
+                event.consume();
+            } else { contextMenu.hide(); }
+        });
+        contextMenu.setAutoHide(true);
+    }
+
+    @FXML
+    public void onExportButtonClick() {
+        String table = tableComboBox.getValue();
+        if (table == null) {
+            displayContext.showError("Ошибка", "Не выбрана таблица");
+            return;
+        }
+
+        try {
+            List<String> columns = ConnectionManager.getInstance().getJdbcService().getTableColumns(ConnectionManager.getInstance().getConnection(), table);
+
+            List<Map<String, String>> rows = new ArrayList<>();
+            for (TableRow row : dataTableView.getItems()) {
+                rows.add(row.getDataAsStrings());
+            }
+
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Выберите папку для сохранения PDF");
+            String userHome = System.getProperty("user.home");
+            File documentsDir = new File(userHome, "Documents");
+            if (documentsDir.exists()) {
+                directoryChooser.setInitialDirectory(documentsDir);
+            }
+
+            File selectedDirectory = directoryChooser.showDialog(
+                    exportButton.getScene().getWindow()
+            );
+
+            if (selectedDirectory != null) {
+                String fileName = table + ".pdf";
+                String filePath = selectedDirectory.getAbsolutePath() + File.separator + fileName;
+                PDFExporter.exportToPDF(filePath, table, columns, rows);
+
+                displayContext.showInfo("Успех", "Таблица экспортирована:\n" + filePath);
+            }
+
+        } catch (Exception e) {
+            displayContext.showError("Ошибка", e.getMessage());
+        }
     }
 }
