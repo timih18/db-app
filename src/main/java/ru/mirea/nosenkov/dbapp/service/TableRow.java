@@ -16,4 +16,13 @@ public class TableRow {
     public StringProperty getProperty(String column) {
         return data.getOrDefault(column, new SimpleStringProperty("null"));
     }
+
+    public Map<String, String> getDataAsStrings() {
+        Map<String, String> result = new HashMap<>();
+        for (Map.Entry<String, StringProperty> entry : data.entrySet()) {
+            result.put(entry.getKey(), entry.getValue().get());
+        }
+        return result;
+    }
+
 }

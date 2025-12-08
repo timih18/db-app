@@ -16,4 +16,6 @@ public interface DatabaseService {
     List<String> getEditableColumns(Connection connection, String table) throws SQLException;
 
     int addToDB(Connection connection, String table, Map<String, String> values) throws SQLException;
+
+    void deleteFromDB(Connection connection, String table, Map<String, String> primaryKeyValues) throws SQLException;
 }

@@ -13,6 +13,7 @@ import ru.mirea.nosenkov.dbapp.ui.TableViewBuilder;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class MainFormController {
     @FXML
@@ -27,6 +28,8 @@ public class MainFormController {
     private TableView<TableRow> dataTableView;
     @FXML
     private Button addButton;
+    @FXML
+    private Button deleteButton;
 
     private DisplayContext displayContext;
     private TableDataService tableDataService;
@@ -35,7 +38,7 @@ public class MainFormController {
 
     @FXML
     public void initialize() {
-        this.elementsManager = new ElementsManager(connectItem, disconnectItem, tableComboBox, refreshButton, addButton, dataTableView);
+        this.elementsManager = new ElementsManager(connectItem, disconnectItem, tableComboBox, refreshButton, addButton, deleteButton, dataTableView);
         this.tableDataService = new TableDataService(ConnectionManager.getInstance());
         this.tableViewBuilder = new TableViewBuilder();
         this.displayContext = new DisplayContextImpl();
@@ -95,6 +98,28 @@ public class MainFormController {
             result.stage().showAndWait();
         } catch (Exception e) {
             displayContext.showError("Ошибка", e.getMessage());
+        }
+    }
+
+    @FXML
+    public void onDeleteButtonClick() {
+        TableRow row = dataTableView.getSelectionModel().getSelectedItem();
+        String table = tableComboBox.getValue();
+
+        if (row == null) {
+            displayContext.showError("Ошибка", "Не выбрана запись для удаления");
+            return;
+        }
+
+        Optional<ButtonType> result = displayContext.showConfirmation("Подтверждение удаления", "Вы уверены, что хотите удалить выбранную запись?");
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                ConnectionManager.getInstance().getJdbcService().deleteFromDB(ConnectionManager.getInstance().getConnection(), table, row.getDataAsStrings());
+                displayContext.showInfo("Успех", "Запись успешно удалена");
+                refreshCurrentTable();
+            } catch (SQLException e) {
+                displayContext.showError("Ошибка", "Не удалось удалить запись: " + e.getMessage());
+            }
         }
     }
 

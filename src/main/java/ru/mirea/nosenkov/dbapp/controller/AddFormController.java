@@ -72,6 +72,11 @@ public class AddFormController {
                 String columnName = columns.get(i);
                 String value = ((TextField) fieldContainer.getChildren().get(1)).getText().trim();
 
+                if (value.isEmpty()) {
+                    displayContext.showError("Ошибка", "Все поля должны быть заполнены");
+                    return;
+                }
+
                 columnValues.put(columnName, value);
             }
 

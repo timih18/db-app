@@ -2,8 +2,10 @@ package ru.mirea.nosenkov.dbapp.impl;
 
 import ru.mirea.nosenkov.dbapp.logic.DatabaseService;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -124,5 +126,108 @@ public class JDBCService implements DatabaseService {
             }
         }
         return columns;
+    }
+
+    @Override
+    public void deleteFromDB(Connection connection, String table, Map<String, String> primaryKeyValues) throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            throw new SQLException("Нет подключения к БД");
+        }
+
+        List<String> primaryKeyColumns = getPrimaryKeyColumns(connection,  table);
+
+        StringBuilder clause = new StringBuilder();
+        for (int i = 0; i < primaryKeyColumns.size(); ++i) {
+            clause.append("[").append(primaryKeyColumns.get(i)).append("]").append(" = ?");
+            if (i > 0) { clause.append(" AND "); }
+        }
+
+        String query = "DELETE FROM " + "[" + table + "]" + "WHERE " + clause;
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            Map<String, Integer> columnTypes = getColumnTypes(connection, table);
+            int ind = 1;
+            for (String primaryKeyColumn : primaryKeyColumns) {
+                String value = primaryKeyValues.get(primaryKeyColumn);
+                Integer type = columnTypes.get(primaryKeyColumn);
+
+                if (value == null || "null".equalsIgnoreCase(value)) {
+                    statement.setNull(ind++, type != null ? type : Types.VARCHAR);
+                } else {
+                    setParameterByType(statement, ind++, value, type);
+                }
+            }
+            statement.executeUpdate();
+        }
+    }
+
+    private List<String> getPrimaryKeyColumns(Connection connection, String table) throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            throw new SQLException("Нет подключения к БД");
+        }
+
+        List<String> primaryKeyColumns = new ArrayList<>();
+        DatabaseMetaData metaData = connection.getMetaData();
+
+        try (ResultSet resultSet = metaData.getPrimaryKeys(null, null, table)) {
+            while (resultSet.next()) {
+                primaryKeyColumns.add(resultSet.getString("COLUMN_NAME"));
+            }
+        }
+        return primaryKeyColumns;
+    }
+
+    private Map<String, Integer> getColumnTypes(Connection connection, String table) throws SQLException {
+        Map<String, Integer> types = new HashMap<>();
+        DatabaseMetaData metaData = connection.getMetaData();
+
+        try (ResultSet rs = metaData.getColumns(null, null, table, null)) {
+            while (rs.next()) {
+                String columnName = rs.getString("COLUMN_NAME");
+                int dataType = rs.getInt("DATA_TYPE");
+                types.put(columnName, dataType);
+            }
+        }
+        return types;
+    }
+
+    private void setParameterByType(PreparedStatement statement, int ind, String value, Integer type) throws SQLException {
+        if (type == null) {
+            statement.setString(ind, value);
+            return;
+        }
+
+        try {
+            switch (type) {
+                case Types.INTEGER, Types.SMALLINT, Types.TINYINT:
+                    statement.setInt(ind, Integer.parseInt(value));
+                    break;
+                case Types.BIGINT:
+                    statement.setLong(ind, Long.parseLong(value));
+                    break;
+                case Types.DECIMAL, Types.NUMERIC:
+                    statement.setBigDecimal(ind, new BigDecimal(value));
+                    break;
+                case Types.FLOAT, Types.REAL:
+                    statement.setFloat(ind, Float.parseFloat(value));
+                    break;
+                case Types.DOUBLE:
+                    statement.setDouble(ind, Double.parseDouble(value));
+                    break;
+                case Types.BOOLEAN, Types.BIT:
+                    statement.setBoolean(ind, Boolean.parseBoolean(value));
+                    break;
+                case Types.DATE:
+                    statement.setDate(ind, Date.valueOf(value));
+                    break;
+                case Types.TIMESTAMP:
+                    statement.setTimestamp(ind, Timestamp.valueOf(value));
+                    break;
+                default:
+                    statement.setString(ind, value);
+                    break;
+            }
+        } catch (IllegalArgumentException e) {
+            statement.setString(ind, value);
+        }
     }
 }
