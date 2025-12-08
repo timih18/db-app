@@ -4,10 +4,8 @@ import ru.mirea.nosenkov.dbapp.logic.DatabaseService;
 
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Date;
+import java.util.*;
 
 public class JDBCService implements DatabaseService {
 
@@ -84,7 +82,6 @@ public class JDBCService implements DatabaseService {
         StringBuilder values = new StringBuilder();
         List<String> columnList = new ArrayList<>(inputValues.keySet());
         List<String> editableColumns = getEditableColumns(connection, table);
-
         for (int i = 0; i < columnList.size(); ++i) {
             String column = columnList.get(i);
             if (editableColumns.contains(column)) {
@@ -126,6 +123,66 @@ public class JDBCService implements DatabaseService {
             }
         }
         return columns;
+    }
+
+    @Override
+    public int updateInDB(Connection connection, String table, Map<String, String> originalValues, Map<String, String> newValues) throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            throw new SQLException("Нет подключения к БД");
+        }
+
+        List<String> primaryKeyColumns = getPrimaryKeyColumns(connection, table);
+        List<String> editableColumns = getEditableColumns(connection, table);
+        StringBuilder setClause = new StringBuilder();
+        List<String> columnsToUpdate = new ArrayList<>();
+        Set<String> set = new HashSet<>(primaryKeyColumns);
+
+        for (String column : editableColumns) {
+            if (!set.contains(column) && newValues.containsKey(column)) {
+                if (!setClause.isEmpty()) {
+                    setClause.append(", ");
+                }
+                setClause.append("[").append(column).append("]").append(" = ?");
+                columnsToUpdate.add(column);
+            }
+        }
+
+        StringBuilder whereClause = new StringBuilder();
+        for (int i = 0; i < primaryKeyColumns.size(); ++i) {
+            if (i != 0) {
+                whereClause.append(" AND ");
+            }
+            whereClause.append("[").append(primaryKeyColumns.get(i)).append("]").append(" = ?");
+        }
+
+        String query = "UPDATE " + "[" + table + "]" + " SET " + setClause + " WHERE " + whereClause;
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            Map<String, Integer> columnTypes = getColumnTypes(connection, table);
+            int ind = 1;
+            for (String column : columnsToUpdate) {
+                String value = newValues.get(column);
+                Integer type = columnTypes.get(column);
+
+                if (value == null || "null".equalsIgnoreCase(value)) {
+                    statement.setNull(ind++, type != null ? type : Types.VARCHAR);
+                } else {
+                    setParameterByType(statement, ind++, value, type);
+                }
+            }
+
+            for (String primaryKeyColumn : primaryKeyColumns) {
+                String value = newValues.get(primaryKeyColumn);
+                Integer type = columnTypes.get(primaryKeyColumn);
+
+                if (value == null || "null".equalsIgnoreCase(value)) {
+                    statement.setNull(ind++, type != null ? type : Types.VARCHAR);
+                } else {
+                    setParameterByType(statement, ind++, value, type);
+                }
+            }
+
+            return statement.executeUpdate();
+        }
     }
 
     @Override

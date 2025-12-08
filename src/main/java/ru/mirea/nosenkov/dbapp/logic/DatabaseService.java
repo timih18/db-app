@@ -17,5 +17,7 @@ public interface DatabaseService {
 
     int addToDB(Connection connection, String table, Map<String, String> values) throws SQLException;
 
+    int updateInDB(Connection connection, String table, Map<String, String> originalValues, Map<String, String> newValues) throws SQLException;
+
     void deleteFromDB(Connection connection, String table, Map<String, String> primaryKeyValues) throws SQLException;
 }

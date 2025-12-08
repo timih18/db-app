@@ -29,6 +29,8 @@ public class MainFormController {
     @FXML
     private Button addButton;
     @FXML
+    private Button updateButton;
+    @FXML
     private Button deleteButton;
 
     private DisplayContext displayContext;
@@ -38,7 +40,7 @@ public class MainFormController {
 
     @FXML
     public void initialize() {
-        this.elementsManager = new ElementsManager(connectItem, disconnectItem, tableComboBox, refreshButton, addButton, deleteButton, dataTableView);
+        this.elementsManager = new ElementsManager(connectItem, disconnectItem, tableComboBox, refreshButton, addButton, updateButton, deleteButton, dataTableView);
         this.tableDataService = new TableDataService(ConnectionManager.getInstance());
         this.tableViewBuilder = new TableViewBuilder();
         this.displayContext = new DisplayContextImpl();
@@ -95,6 +97,26 @@ public class MainFormController {
             StageCreator.StageWithController<AddFormController> result = StageCreator.createAddFromStage(table, addButton.getScene().getWindow());
             var columns = ConnectionManager.getInstance().getJdbcService().getEditableColumns(ConnectionManager.getInstance().getConnection(), table);
             result.controller().setTableData(table, columns, this);
+            result.stage().showAndWait();
+        } catch (Exception e) {
+            displayContext.showError("Ошибка", e.getMessage());
+        }
+    }
+
+    @FXML
+    public void onUpdateButtonClick() {
+        TableRow row = dataTableView.getSelectionModel().getSelectedItem();
+        String table = tableComboBox.getValue();
+
+        if (row == null) {
+            displayContext.showError("Ошибка", "Не выбрана запись для изменения");
+            return;
+        }
+
+        try {
+            StageCreator.StageWithController<UpdateFormController> result = StageCreator.createUpdateFormStage(table, updateButton.getScene().getWindow());
+            var columns = ConnectionManager.getInstance().getJdbcService().getEditableColumns(ConnectionManager.getInstance().getConnection(), table);
+            result.controller().setTableData(table, columns, row.getDataAsStrings(), this);
             result.stage().showAndWait();
         } catch (Exception e) {
             displayContext.showError("Ошибка", e.getMessage());

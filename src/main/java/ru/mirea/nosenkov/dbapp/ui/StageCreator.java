@@ -38,6 +38,18 @@ public class StageCreator {
         return new StageWithController<>(stage, controller);
     }
 
+    public static <T> StageWithController<T> createUpdateFormStage(String table, Window owner) throws IOException {
+        FXMLLoader loader = new FXMLLoader(Launcher.class.getResource("UpdateForm.fxml"));
+        Scene scene = new Scene(loader.load());
+
+        Stage stage = createStage("Изменить запись - " + table, scene);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(owner);
+
+        T controller = loader.getController();
+        return new StageWithController<>(stage, controller);
+    }
+
     private static Stage createStage(String title, Scene scene) {
         Stage stage = new Stage();
         stage.setTitle(title);

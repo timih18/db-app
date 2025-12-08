@@ -32,6 +32,7 @@
         <ComboBox fx:id="tableComboBox" prefWidth="200.0" onAction="#onTableSelected" disable="true"/>
         <Button fx:id="refreshButton" text="Обновить" onAction="#onRefreshButtonClick" disable="true"/>
         <Button fx:id="addButton" text="Добавить запись" onAction="#onAddButtonClick" disable="true"/>
+        <Button fx:id="updateButton" text="Изменить запись" onAction="#onUpdateButtonClick" disable="true"/>
         <Button fx:id="deleteButton" text="Удалить запись" onAction="#onDeleteButtonClick" disable="true"/>
     </HBox>
 
